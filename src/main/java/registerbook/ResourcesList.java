@@ -18,7 +18,8 @@ public class ResourcesList {
     public static final ImageIcon addImage = imageLoader.getImageIcon("add");
     public static final ImageIcon removeImage = imageLoader.getImageIcon("remove");
 
-    //Размеры главного окна
+    //Параметры главного окна
+    public static final String frmTitle = "RegisterBook";
     public static final int FRM_WIDTH = 1000;
     public static final int FRM_HEIGHT = 800;
     public static final int MIN_FRM_WIDTH = 600;

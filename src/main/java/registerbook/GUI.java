@@ -16,7 +16,7 @@ public class GUI {
     }
 
     private void createFrm(){
-        frm = new JFrame("PhoneBook");
+        frm = new JFrame(frmTitle);
         frm.setIconImage(logoImage);
         frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frm.setSize(FRM_WIDTH, FRM_HEIGHT);
