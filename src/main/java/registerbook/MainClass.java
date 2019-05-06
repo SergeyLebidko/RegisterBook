@@ -10,12 +10,16 @@ public class MainClass {
 
     public static void main(String[] args) {
 
+        //Пытаемся получить подключение к базе данных
         try {
-            dbHandler=new DBHandler();
+            dbHandler = new DBHandler();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "", "", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Ошибка подключения к базе данных. Приложение будет закрыто.", "", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        //Если подключение успешно получено, то создаем интерфейс
+        new GUI();
 
     }
 
