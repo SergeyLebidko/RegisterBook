@@ -43,12 +43,20 @@ public class ResourcesList {
     public static final int MIN_FRM_WIDTH = 600;
     public static final int MIN_FRM_HEIGHT = 400;
 
+    //Тексты сообщений об ошибках
+    public static final String doNotOpenCatalog = "Не удалось открыть каталог";
+    public static final String doNotOpenOperations = "Не удалось открыть журнал операций";
+
     //Параметры табличного компонента
     public static final int rowHeight = 20;
     public static final Color gridColor = Color.LIGHT_GRAY;
 
     //Шрифт для таблиц
     public static final Font mainFont = new Font("Arial", Font.PLAIN, 16);
+
+    //Подписи для пунктов всплывающих меню
+    public static final String openCatalogMenuItemText="Открыть каталог";
+    public static final String openOperationsMenuItemText="Открыть журнал операций";
 
     private static class ImageLoader {
 

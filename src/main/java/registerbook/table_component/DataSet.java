@@ -7,6 +7,10 @@ public class DataSet {
 
     private Object[][] data;
 
+    public DataSet(){
+        this(new Object[0][0]);
+    }
+
     public DataSet(Object[][] data) {
         this.data = data;
 
@@ -16,10 +20,10 @@ public class DataSet {
         }
         columnNames = new String[columnCount];
         for (int i = 0; i < columnCount; i++) {
-            columnNames[i] = "Столбец";
+            columnNames[i] = (i+1)+"";
         }
 
-        displayName = "dataset";
+        displayName = "";
     }
 
     public String getDisplayName() {

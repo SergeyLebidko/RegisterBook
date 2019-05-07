@@ -4,6 +4,10 @@ import registerbook.table_component.DataTable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static registerbook.ResourcesList.*;
 
@@ -26,6 +30,7 @@ public class GUI {
         createToolbar();
         createMainTable();
         setMainTableStartContent();
+        createOpenMenu();
         showFrm();
     }
 
@@ -83,7 +88,37 @@ public class GUI {
     private void setMainTableStartContent(){
         actionHandler = new ActionHandler();
         actionHandler.setMainTable(mainTable);
-        actionHandler.setMainTableContent(ActionHandler.CATALOG);
+        actionHandler.commandHandler(ActionHandler.OPEN_CATALOG_COMMAND);
+    }
+
+    private void createOpenMenu(){
+        JPopupMenu openMenu;
+        openMenu = new JPopupMenu();
+        JMenuItem openCatalogItem = new JMenuItem(openCatalogMenuItemText);
+        JMenuItem openOperationsItem = new JMenuItem(openOperationsMenuItemText);
+        openMenu.add(openCatalogItem);
+        openMenu.add(openOperationsItem);
+
+        openBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                openMenu.show(openBtn, e.getX(),e.getY());
+            }
+        });
+
+        openCatalogItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionHandler.commandHandler(ActionHandler.OPEN_CATALOG_COMMAND);
+            }
+        });
+
+        openOperationsItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionHandler.commandHandler(ActionHandler.OPEN_OPERATIONS_COMMAND);
+            }
+        });
     }
 
     private void showFrm() {
