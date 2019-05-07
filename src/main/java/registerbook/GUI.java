@@ -1,5 +1,7 @@
 package registerbook;
 
+import registerbook.table_component.DataTable;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,6 +10,7 @@ import static registerbook.ResourcesList.*;
 public class GUI {
 
     private JFrame frm;
+    private ActionHandler actionHandler;
 
     private JToolBar toolBar;
     private JButton openBtn;
@@ -16,9 +19,13 @@ public class GUI {
     private JButton removeBtn;
     private JButton reportBtn;
 
+    private DataTable mainTable;
+
     public GUI() {
         createFrm();
         createToolbar();
+        createMainTable();
+        setMainTableStartContent();
         showFrm();
     }
 
@@ -38,6 +45,7 @@ public class GUI {
     private void createToolbar() {
         toolBar = new JToolBar();
         toolBar.setFloatable(false);
+        toolBar.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
 
         openBtn = new JButton(openBtnText, openImage);
         openBtn.setToolTipText(openBtnToolTip);
@@ -65,6 +73,17 @@ public class GUI {
         toolBar.add(reportBtn);
 
         frm.add(toolBar, BorderLayout.NORTH);
+    }
+
+    private void createMainTable() {
+        mainTable = new DataTable();
+        frm.add(mainTable.getVisualComponent(), BorderLayout.CENTER);
+    }
+
+    private void setMainTableStartContent(){
+        actionHandler = new ActionHandler();
+        actionHandler.setMainTable(mainTable);
+        actionHandler.setMainTableContent(ActionHandler.CATALOG);
     }
 
     private void showFrm() {

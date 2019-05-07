@@ -22,9 +22,10 @@ public class DBHandler {
     }
 
     public ArrayList<Object[]> getOperations() throws Exception{
-        String query = "SELECT ID, DATE, NAME, COUNT " +
-                "FROM CATALOG, OPERATIONS" +
-                "WHERE CATALOG.ID=OPERATIONS.CATALOG_ID";
+        String query = "SELECT OPERATIONS.ID, DATE, NAME, COUNT " +
+                "FROM CATALOG, OPERATIONS " +
+                "WHERE CATALOG.ID=OPERATIONS.CATALOG_ID " +
+                "ORDER BY DATE(DATE) ASC";
         ResultSet resultSet = statement.executeQuery(query);
         return convertSetToList(resultSet);
     }

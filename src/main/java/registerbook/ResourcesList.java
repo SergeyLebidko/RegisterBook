@@ -47,6 +47,9 @@ public class ResourcesList {
     public static final int rowHeight = 20;
     public static final Color gridColor = Color.LIGHT_GRAY;
 
+    //Шрифт для таблиц
+    public static final Font mainFont = new Font("Arial", Font.PLAIN, 16);
+
     private static class ImageLoader {
 
         private static final String[] imageNamesList = {
