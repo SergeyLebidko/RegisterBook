@@ -16,6 +16,7 @@ public class ActionHandler {
     public static final String OPEN_CATALOG_COMMAND = "open catalog";
     public static final String OPEN_OPERATIONS_COMMAND = "open operations";
 
+
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";
 

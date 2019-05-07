@@ -43,6 +43,12 @@ public class ResourcesList {
     public static final int MIN_FRM_WIDTH = 600;
     public static final int MIN_FRM_HEIGHT = 400;
 
+    //Надписи в стандартных диалоговых окнах
+    public static final String yesButtonText = "Да";
+    public static final String noButtonText = "Нет";
+    public static final String cancelButtonText = "отмена";
+    public static final String inputDialogTitle = "";
+
     //Тексты сообщений об ошибках
     public static final String doNotOpenCatalog = "Не удалось открыть каталог";
     public static final String doNotOpenOperations = "Не удалось открыть журнал операций";

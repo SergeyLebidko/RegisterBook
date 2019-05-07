@@ -27,11 +27,19 @@ public class GUI {
 
     public GUI() {
         createFrm();
+        localizationStandartDialog();
         createToolbar();
         createMainTable();
         setMainTableStartContent();
         createOpenMenu();
         showFrm();
+    }
+
+    private void localizationStandartDialog(){
+        UIManager.put("OptionPane.yesButtonText", yesButtonText);
+        UIManager.put("OptionPane.noButtonText", noButtonText);
+        UIManager.put("OptionPane.cancelButtonText", cancelButtonText);
+        UIManager.put("OptionPane.inputDialogTitle", inputDialogTitle);
     }
 
     private void createFrm() {
