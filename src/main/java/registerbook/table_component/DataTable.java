@@ -10,6 +10,8 @@ public class DataTable {
     private JPanel contentPane;
     private JTable table;
     private TableModel tableModel;
+    private TableCellRenderer cellRenderer;
+    private TableHeaderRenderer headerRenderer;
     private JLabel nameLab;
 
     public DataTable() {
@@ -26,6 +28,12 @@ public class DataTable {
         tableModel = new TableModel();
         table = new JTable(tableModel);
         table.getTableHeader().setReorderingAllowed(false);
+
+        cellRenderer = new TableCellRenderer();
+        headerRenderer = new TableHeaderRenderer();
+        table.setDefaultRenderer(Object.class, cellRenderer);
+        table.getTableHeader().setDefaultRenderer(headerRenderer);
+
         table.setShowVerticalLines(false);
         table.setGridColor(gridColor);
         table.setRowHeight(rowHeight);
