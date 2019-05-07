@@ -17,6 +17,8 @@ public class ResourcesList {
     public static final Image logoImage = imageLoader.getImage("logo");
     public static final ImageIcon addImage = imageLoader.getImageIcon("add");
     public static final ImageIcon removeImage = imageLoader.getImageIcon("remove");
+    public static final ImageIcon editIcon = imageLoader.getImageIcon("edit");
+    public static final ImageIcon reportIcon = imageLoader.getImageIcon("report");
 
     //Параметры главного окна
     public static final String frmTitle = "RegisterBook";
@@ -25,12 +27,18 @@ public class ResourcesList {
     public static final int MIN_FRM_WIDTH = 600;
     public static final int MIN_FRM_HEIGHT = 400;
 
+    //Параметры табличного компонента
+    public static final int rowHeight = 20;
+    public static final Color gridColor = Color.LIGHT_GRAY;
+
     private static class ImageLoader {
 
         private static final String[] imageNamesList = {
                 "logo",
                 "add",
-                "remove"
+                "remove",
+                "edit",
+                "report"
         };
 
         private HashMap<String, Image> imageMap = new HashMap<>();
