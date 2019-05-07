@@ -3,6 +3,7 @@ package registerbook;
 import registerbook.data_access_components.DBHandler;
 import registerbook.table_component.DataSet;
 import registerbook.table_component.DataTable;
+
 import static registerbook.ResourcesList.*;
 
 import javax.swing.*;
@@ -39,8 +40,10 @@ public class ActionHandler {
         if (command.equals(OPEN_CATALOG_COMMAND)) {
             try {
                 setMainTableContent(CATALOG_DATASET);
+                state = CATALOG_DATASET;
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, doNotOpenCatalog,"Ошибка", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, doNotOpenCatalog, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                state="";
                 return;
             }
             return;
@@ -50,8 +53,10 @@ public class ActionHandler {
         if (command.equals(OPEN_OPERATIONS_COMMAND)) {
             try {
                 setMainTableContent(OPERATIONS_DATASET);
+                state = OPERATIONS_DATASET;
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, doNotOpenOperations,"Ошибка", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, doNotOpenOperations, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                state="";
                 return;
             }
             return;
@@ -61,7 +66,6 @@ public class ActionHandler {
 
     private void setMainTableContent(String nameDataSet) throws Exception {
         mainTable.refresh(getDataSet(nameDataSet));
-        state = nameDataSet;
     }
 
     private DataSet getDataSet(String nameDataSet) throws Exception {
