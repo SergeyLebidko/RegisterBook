@@ -15,7 +15,7 @@ public class ActionHandler {
 
     public static final String OPEN_CATALOG_COMMAND = "open catalog";
     public static final String OPEN_OPERATIONS_COMMAND = "open operations";
-
+    public static final String ADD_COMMAND = "add";
 
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";
@@ -61,6 +61,16 @@ public class ActionHandler {
                 return;
             }
             return;
+        }
+
+        //Добавляем новую позицию в каталог
+        if (command.equals(ADD_COMMAND) & state.equals(CATALOG_DATASET)){
+            System.out.println("Добавляем в каталог");
+        }
+
+        //Добавляем новую операцию в журнал операций
+        if (command.equals(ADD_COMMAND) & state.equals(OPERATIONS_DATASET)){
+            System.out.println("Добавляем в журнал операций");
         }
 
     }

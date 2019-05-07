@@ -30,8 +30,9 @@ public class GUI {
         localizationStandartDialog();
         createToolbar();
         createMainTable();
-        setMainTableStartContent();
+        createActionHandler();
         createOpenMenu();
+        createAddButtonHandler();
         showFrm();
     }
 
@@ -93,10 +94,9 @@ public class GUI {
         frm.add(mainTable.getVisualComponent(), BorderLayout.CENTER);
     }
 
-    private void setMainTableStartContent(){
+    private void createActionHandler(){
         actionHandler = new ActionHandler();
         actionHandler.setMainTable(mainTable);
-        actionHandler.commandHandler(ActionHandler.OPEN_CATALOG_COMMAND);
     }
 
     private void createOpenMenu(){
@@ -126,6 +126,12 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 actionHandler.commandHandler(ActionHandler.OPEN_OPERATIONS_COMMAND);
             }
+        });
+    }
+
+    private void createAddButtonHandler(){
+        addBtn.addActionListener((e)->{
+            actionHandler.commandHandler(ActionHandler.ADD_COMMAND);
         });
     }
 
