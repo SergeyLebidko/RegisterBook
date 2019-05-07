@@ -12,13 +12,29 @@ public class ResourcesList {
     public static final String jdbcClassName = "org.sqlite.JDBC";
     public static final String databaseConnectionString = "jdbc:sqlite:database\\database.db";
 
-    //Графические ресурсы
+    //Ресурсы для кнопок
     private static ImageLoader imageLoader = new ImageLoader();
     public static final Image logoImage = imageLoader.getImage("logo");
+    public static final ImageIcon openImage = imageLoader.getImageIcon("open");
     public static final ImageIcon addImage = imageLoader.getImageIcon("add");
     public static final ImageIcon removeImage = imageLoader.getImageIcon("remove");
-    public static final ImageIcon editIcon = imageLoader.getImageIcon("edit");
-    public static final ImageIcon reportIcon = imageLoader.getImageIcon("report");
+    public static final ImageIcon editImage = imageLoader.getImageIcon("edit");
+    public static final ImageIcon reportImage = imageLoader.getImageIcon("report");
+
+    public static final String openBtnText = "";
+    public static final String openBtnToolTip = "Открыть";
+
+    public static final String addBtnText = "";
+    public static final String addBtnToolTip = "Создать";
+
+    public static final String editBtnText = "";
+    public static final String editBtnToolTip = "Изменить";
+
+    public static final String removeBtnText = "";
+    public static final String removeBtnToolTip = "Удалить";
+
+    public static final String reportBtnText = "";
+    public static final String reportBtnToolTip = "Отчет";
 
     //Параметры главного окна
     public static final String frmTitle = "RegisterBook";
@@ -35,6 +51,7 @@ public class ResourcesList {
 
         private static final String[] imageNamesList = {
                 "logo",
+                "open",
                 "add",
                 "remove",
                 "edit",
