@@ -1,17 +1,17 @@
 package registerbook.table_component;
 
-public class DataSet {
+public class TableContent {
 
     private String displayName;        //Отображаемое имя набора данных
     private String[] columnNames;      //Имена столбцов
 
     private Object[][] data;
 
-    public DataSet(){
+    public TableContent(){
         this(new Object[0][0]);
     }
 
-    public DataSet(Object[][] data) {
+    public TableContent(Object[][] data) {
         this.data = data;
 
         int columnCount=0;

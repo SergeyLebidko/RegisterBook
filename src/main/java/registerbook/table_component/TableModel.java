@@ -4,7 +4,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class TableModel extends AbstractTableModel {
 
-    private DataSet content;
+    private TableContent content;
     private int rowCount;
     private int columnCount;
 
@@ -14,8 +14,8 @@ public class TableModel extends AbstractTableModel {
         columnCount = 0;
     }
 
-    public void refresh(DataSet dataSet) {
-        content = dataSet;
+    public void refresh(TableContent tableContent) {
+        content = tableContent;
         Object[][] data = content.getData();
 
         rowCount=data.length;

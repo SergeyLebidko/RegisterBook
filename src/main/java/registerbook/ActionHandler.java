@@ -1,7 +1,7 @@
 package registerbook;
 
 import registerbook.data_access_components.DBHandler;
-import registerbook.table_component.DataSet;
+import registerbook.table_component.TableContent;
 import registerbook.table_component.DataTable;
 
 import static registerbook.ResourcesList.*;
@@ -79,38 +79,38 @@ public class ActionHandler {
         mainTable.refresh(getDataSet(nameDataSet));
     }
 
-    private DataSet getDataSet(String nameDataSet) throws Exception {
+    private TableContent getDataSet(String nameDataSet) throws Exception {
 
         ArrayList<Object[]> list = null;
-        DataSet dataSet = null;
+        TableContent tableContent = null;
 
         //Открываем таблицу "каталог"
         if (nameDataSet.equals(CATALOG_DATASET)) {
             list = dbHandler.getCatalog();
-            dataSet = convertListToDataSet(list);
-            dataSet.setColumnNames(new String[]{"Наименование"});
-            dataSet.setDisplayName("Каталог");
+            tableContent = convertListToDataSet(list);
+            tableContent.setColumnNames(new String[]{"Наименование"});
+            tableContent.setDisplayName("Каталог");
         }
 
         //Открываем таблицу "журнал операций"
         if (nameDataSet.equals(OPERATIONS_DATASET)) {
             list = dbHandler.getOperations();
-            dataSet = convertListToDataSet(list);
-            dataSet.setColumnNames(new String[]{"Дата", "Наименование", "Количество"});
-            dataSet.setDisplayName("Журнал операций");
+            tableContent = convertListToDataSet(list);
+            tableContent.setColumnNames(new String[]{"Дата", "Наименование", "Количество"});
+            tableContent.setDisplayName("Журнал операций");
         }
 
-        return dataSet;
+        return tableContent;
     }
 
-    private DataSet convertListToDataSet(ArrayList<Object[]> list) {
+    private TableContent convertListToDataSet(ArrayList<Object[]> list) {
         Object[][] data = new Object[list.size()][];
         int i = 0;
         for (Object[] row : list) {
             data[i] = row;
             i++;
         }
-        return new DataSet(data);
+        return new TableContent(data);
     }
 
 }

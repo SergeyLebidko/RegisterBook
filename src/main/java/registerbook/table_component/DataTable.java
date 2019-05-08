@@ -19,9 +19,9 @@ public class DataTable {
         createVisualComponent();
     }
 
-    public void refresh(DataSet dataSet){
-        tableModel.refresh(dataSet);
-        nameLab.setText(dataSet.getDisplayName());
+    public void refresh(TableContent tableContent){
+        tableModel.refresh(tableContent);
+        nameLab.setText(tableContent.getDisplayName());
     }
 
     private void createTable(){
