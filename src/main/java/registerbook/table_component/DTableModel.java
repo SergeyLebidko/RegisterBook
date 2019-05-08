@@ -22,6 +22,10 @@ public class DTableModel extends AbstractTableModel {
         fireTableStructureChanged();
     }
 
+    public Object[] getRowData(int rowIndex) {
+        return content.getRowData(rowIndex);
+    }
+
     @Override
     public int getRowCount() {
         return rowCount;
