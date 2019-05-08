@@ -1,8 +1,7 @@
 package registerbook;
 
 import registerbook.data_access_components.DBHandler;
-import registerbook.table_component.TableContent;
-import registerbook.table_component.DataTable;
+import registerbook.table_component.*;
 
 import static registerbook.ResourcesList.*;
 
@@ -76,41 +75,34 @@ public class ActionHandler {
     }
 
     private void setMainTableContent(String nameDataSet) throws Exception {
-        mainTable.refresh(getDataSet(nameDataSet));
+        mainTable.refresh(createTableContent(nameDataSet));
     }
 
-    private TableContent getDataSet(String nameDataSet) throws Exception {
+    private TableContent createTableContent(String nameTableContent) throws Exception {
 
-        ArrayList<Object[]> list = null;
+        ArrayList<Object[]> list;
         TableContent tableContent = null;
 
         //Открываем таблицу "каталог"
-        if (nameDataSet.equals(CATALOG_DATASET)) {
+        if (nameTableContent.equals(CATALOG_DATASET)) {
             list = dbHandler.getCatalog();
-            tableContent = convertListToDataSet(list);
-            tableContent.setColumnNames(new String[]{"Наименование"});
+            tableContent = new TableContent(list);
+            tableContent.setColumnEnableds(false, true);
+            tableContent.setColumnNames("", "Наименование");
             tableContent.setDisplayName("Каталог");
         }
 
         //Открываем таблицу "журнал операций"
-        if (nameDataSet.equals(OPERATIONS_DATASET)) {
+        if (nameTableContent.equals(OPERATIONS_DATASET)) {
             list = dbHandler.getOperations();
-            tableContent = convertListToDataSet(list);
-            tableContent.setColumnNames(new String[]{"Дата", "Наименование", "Количество"});
+            tableContent = new TableContent(list);
+            tableContent.setColumnEnableds(false, true, true, true);
+            tableContent.setColumnNames("","Дата", "Наименование", "Количество");
             tableContent.setDisplayName("Журнал операций");
         }
 
         return tableContent;
     }
 
-    private TableContent convertListToDataSet(ArrayList<Object[]> list) {
-        Object[][] data = new Object[list.size()][];
-        int i = 0;
-        for (Object[] row : list) {
-            data[i] = row;
-            i++;
-        }
-        return new TableContent(data);
-    }
 
 }

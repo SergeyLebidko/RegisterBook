@@ -16,14 +16,8 @@ public class TableModel extends AbstractTableModel {
 
     public void refresh(TableContent tableContent) {
         content = tableContent;
-        Object[][] data = content.getData();
-
-        rowCount=data.length;
-        columnCount=0;
-        if (data.length>0){
-            columnCount = data[0].length-1;
-        }
-
+        rowCount = tableContent.getRowCount();
+        columnCount = tableContent.getColumnCount();
         fireTableDataChanged();
     }
 
@@ -39,15 +33,13 @@ public class TableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-        String[] columnNames = content.getColumnNames();
-        return columnNames[column];
+        return content.getColumnName(column);
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (content == null) return null;
-        Object[][] data = content.getData();
-        return data[rowIndex][columnIndex + 1];
+        return content.getValueAt(rowIndex, columnIndex);
     }
 
 }
