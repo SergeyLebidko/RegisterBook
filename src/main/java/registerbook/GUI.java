@@ -1,6 +1,6 @@
 package registerbook;
 
-import registerbook.table_component.DataTable;
+import registerbook.table_component.DTablePane;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,7 @@ public class GUI {
     private JButton removeBtn;
     private JButton reportBtn;
 
-    private DataTable mainTable;
+    private DTablePane mainTable;
 
     public GUI() {
         createFrm();
@@ -90,7 +90,7 @@ public class GUI {
     }
 
     private void createMainTable() {
-        mainTable = new DataTable();
+        mainTable = new DTablePane();
         frm.add(mainTable.getVisualComponent(), BorderLayout.CENTER);
     }
 

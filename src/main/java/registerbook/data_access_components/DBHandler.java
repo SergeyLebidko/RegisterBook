@@ -21,7 +21,7 @@ public class DBHandler {
         return convertSetToList(resultSet);
     }
 
-    public ArrayList<Object[]> getOperations() throws Exception{
+    public ArrayList<Object[]> getOperations() throws Exception {
         String query = "SELECT OPERATIONS.ID, DATE, NAME, COUNT " +
                 "FROM CATALOG, OPERATIONS " +
                 "WHERE CATALOG.ID=OPERATIONS.CATALOG_ID " +
@@ -30,16 +30,21 @@ public class DBHandler {
         return convertSetToList(resultSet);
     }
 
+    public void addNewNameToCatalog(String name) throws SQLException {
+        String query = "INSERT INTO CATALOG (NAME) VALUES (\"" + name + "\")";
+        statement.executeUpdate(query);
+    }
+
     private ArrayList<Object[]> convertSetToList(ResultSet resultSet) throws Exception {
         ArrayList<Object[]> list = new ArrayList<>();
 
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
 
-        while (resultSet.next()){
+        while (resultSet.next()) {
             Object[] row = new Object[columnCount];
-            for (int i=1;i<=columnCount;i++){
-                row[i]=resultSet.getObject(i);
+            for (int i = 1; i <= columnCount; i++) {
+                row[i-1] = resultSet.getObject(i);
             }
             list.add(row);
         }

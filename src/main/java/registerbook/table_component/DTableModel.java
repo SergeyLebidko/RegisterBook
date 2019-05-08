@@ -2,23 +2,24 @@ package registerbook.table_component;
 
 import javax.swing.table.AbstractTableModel;
 
-public class TableModel extends AbstractTableModel {
+public class DTableModel extends AbstractTableModel {
 
-    private TableContent content;
+    private DTableContent content;
     private int rowCount;
     private int columnCount;
 
-    public TableModel() {
+    public DTableModel() {
         content = null;
         rowCount = 0;
         columnCount = 0;
     }
 
-    public void refresh(TableContent tableContent) {
+    public void refresh(DTableContent tableContent) {
         content = tableContent;
         rowCount = tableContent.getRowCount();
         columnCount = tableContent.getColumnCount();
         fireTableDataChanged();
+        fireTableStructureChanged();
     }
 
     @Override

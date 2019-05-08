@@ -52,6 +52,9 @@ public class ResourcesList {
     //Тексты сообщений об ошибках
     public static final String doNotOpenCatalog = "Не удалось открыть каталог";
     public static final String doNotOpenOperations = "Не удалось открыть журнал операций";
+    public static final String nameIsNotEmpty = "Имя не может быть пустым";
+    public static final String nameContainsDisabledChars = "Имя содержит недопустимые символы";
+    public static final String failAddToCatalog = "Не удалось добавить в каталог";
 
     //Параметры табличного компонента
     public static final int rowHeight = 20;

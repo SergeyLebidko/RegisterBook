@@ -5,32 +5,32 @@ import java.awt.*;
 
 import static registerbook.ResourcesList.*;
 
-public class DataTable {
+public class DTablePane {
 
     private JPanel contentPane;
     private JTable table;
-    private TableModel tableModel;
-    private TableCellRenderer cellRenderer;
-    private TableHeaderRenderer headerRenderer;
+    private DTableModel dataTableModel;
+    private DTableCellRenderer cellRenderer;
+    private DTableHeaderRenderer headerRenderer;
     private JLabel nameLab;
 
-    public DataTable() {
+    public DTablePane() {
         createTable();
         createVisualComponent();
     }
 
-    public void refresh(TableContent tableContent){
-        tableModel.refresh(tableContent);
+    public void refresh(DTableContent tableContent){
+        dataTableModel.refresh(tableContent);
         nameLab.setText(tableContent.getDisplayName());
     }
 
     private void createTable(){
-        tableModel = new TableModel();
-        table = new JTable(tableModel);
+        dataTableModel = new DTableModel();
+        table = new JTable(dataTableModel);
         table.getTableHeader().setReorderingAllowed(false);
 
-        cellRenderer = new TableCellRenderer();
-        headerRenderer = new TableHeaderRenderer();
+        cellRenderer = new DTableCellRenderer();
+        headerRenderer = new DTableHeaderRenderer();
         table.setDefaultRenderer(Object.class, cellRenderer);
         table.getTableHeader().setDefaultRenderer(headerRenderer);
 

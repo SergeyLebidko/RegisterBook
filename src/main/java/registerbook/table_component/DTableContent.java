@@ -2,7 +2,7 @@ package registerbook.table_component;
 
 import java.util.ArrayList;
 
-public class TableContent {
+public class DTableContent {
 
     private String displayName;
     private String[] columnNames;
@@ -12,7 +12,7 @@ public class TableContent {
     private int rowCount;
     private int columnCount;
 
-    public TableContent(ArrayList<Object[]> list) {
+    public DTableContent(ArrayList<Object[]> list) {
         //Получаем количество строк и столбцов в таблице
         rowCount = list.size();
         columnCount = 0;
@@ -33,7 +33,7 @@ public class TableContent {
 
         columnNames = new String[columnCount];
         for (int col = 0; col < columnCount; col++) {
-            columnNames[col] = "";
+            columnNames[col] = "Столбец "+col;
         }
 
         columnEnableds = new boolean[columnCount];
