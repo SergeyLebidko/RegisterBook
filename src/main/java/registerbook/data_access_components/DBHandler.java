@@ -16,7 +16,7 @@ public class DBHandler {
     }
 
     public ArrayList<Object[]> getCatalog() throws Exception {
-        String query = "SELECT * FROM CATALOG";
+        String query = "SELECT * FROM CATALOG ORDER BY NAME";
         ResultSet resultSet = statement.executeQuery(query);
         return convertSetToList(resultSet);
     }

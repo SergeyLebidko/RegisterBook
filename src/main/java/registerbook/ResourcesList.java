@@ -57,8 +57,9 @@ public class ResourcesList {
     public static final String failAddToCatalog = "Не удалось добавить в каталог";
 
     //Параметры табличного компонента
-    public static final int rowHeight = 20;
+    public static final int rowHeight = 40;
     public static final Color gridColor = Color.LIGHT_GRAY;
+    public static final Color headerColor = new Color(230,230,230);
 
     //Шрифт для таблиц
     public static final Font mainFont = new Font("Arial", Font.PLAIN, 16);
