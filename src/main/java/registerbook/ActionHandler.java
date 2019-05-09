@@ -65,12 +65,12 @@ public class ActionHandler {
 
         //Добавляем новую позицию в каталог
         if (command.equals(ADD_COMMAND) & state.equals(CATALOG_DATASET)) {
-            String name = getNameString();
-            if (name==null)return;
+            String name = showAddCatalogElementDialog();
+            if (name == null) return;
             try {
                 dbHandler.addNewNameToCatalog(name);
             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, failAddToCatalog+" "+name, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, failAddToCatalog + " " + name, "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             commandHandler(OPEN_CATALOG_COMMAND);
@@ -88,7 +88,36 @@ public class ActionHandler {
         mainTable.refresh(tableContent);
     }
 
-    private String getNameString() {
+    private DTableContent createTableContent(String nameTableContent) throws Exception {
+
+        ArrayList<Object[]> list;
+        DTableContent tableContent = null;
+
+        //Открываем таблицу "каталог"
+        if (nameTableContent.equals(CATALOG_DATASET)) {
+            list = dbHandler.getCatalog();
+            tableContent = new DTableContent(list);
+            tableContent.setColumnEnableds(false, true);
+            tableContent.setColumnNames("", "Наименование");
+            tableContent.setDisplayName("Каталог");
+        }
+
+        //Открываем таблицу "журнал операций"
+        if (nameTableContent.equals(OPERATIONS_DATASET)) {
+            list = dbHandler.getOperations();
+            tableContent = new DTableContent(list);
+            tableContent.setColumnEnableds(false, true, true, true);
+            tableContent.setColumnNames("", "Дата", "Наименование", "Количество");
+            tableContent.setDisplayName("Журнал операций");
+        }
+
+        return tableContent;
+    }
+
+    // ********** Ниже идет список методов, отображающих различные диалоговые окна **********
+
+    //Запрос имени нового элемента каталога
+    private String showAddCatalogElementDialog() {
         String disabledChars = "_%*\"?'";
         boolean findDeniedChar;
         String name;
@@ -118,31 +147,11 @@ public class ActionHandler {
         return name;
     }
 
-    private DTableContent createTableContent(String nameTableContent) throws Exception {
+    //Запрос новой операции
+    private Object[] showAddOperationDialog() {
+        JPanel pane = new JPanel();
 
-        ArrayList<Object[]> list;
-        DTableContent tableContent = null;
-
-        //Открываем таблицу "каталог"
-        if (nameTableContent.equals(CATALOG_DATASET)) {
-            list = dbHandler.getCatalog();
-            tableContent = new DTableContent(list);
-            tableContent.setColumnEnableds(false, true);
-            tableContent.setColumnNames("", "Наименование");
-            tableContent.setDisplayName("Каталог");
-        }
-
-        //Открываем таблицу "журнал операций"
-        if (nameTableContent.equals(OPERATIONS_DATASET)) {
-            list = dbHandler.getOperations();
-            tableContent = new DTableContent(list);
-            tableContent.setColumnEnableds(false, true, true, true);
-            tableContent.setColumnNames("", "Дата", "Наименование", "Количество");
-            tableContent.setDisplayName("Журнал операций");
-        }
-
-        return tableContent;
+        return null;
     }
-
 
 }

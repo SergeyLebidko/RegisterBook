@@ -12,6 +12,14 @@ public class DTableCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel lab = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         lab.setFont(mainFont);
+        if (!isSelected){
+            if ((row%2)==0){
+                lab.setBackground(evenCellsColor);
+            }
+            if ((row%2)!=0){
+                lab.setBackground(notEvenCellsColor);
+            }
+        }
         return lab;
     }
 
