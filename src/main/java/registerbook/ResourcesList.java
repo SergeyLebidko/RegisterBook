@@ -43,18 +43,21 @@ public class ResourcesList {
     public static final int MIN_FRM_WIDTH = 600;
     public static final int MIN_FRM_HEIGHT = 400;
 
-    //Надписи в стандартных диалоговых окнах
+    //Русские варианты надписей в стандартных диалоговых окнах
     public static final String yesButtonText = "Да";
     public static final String noButtonText = "Нет";
-    public static final String cancelButtonText = "отмена";
+    public static final String cancelButtonText = "Отмена";
     public static final String inputDialogTitle = "";
 
     //Тексты сообщений об ошибках
-    public static final String doNotOpenCatalog = "Не удалось открыть каталог";
-    public static final String doNotOpenOperations = "Не удалось открыть журнал операций";
+    public static final String doNotOpenCatalog = "Не удалось открыть Каталог";
+    public static final String doNotOpenOperations = "Не удалось открыть Журнал операций";
     public static final String nameIsNotEmpty = "Имя не может быть пустым";
     public static final String nameContainsDisabledChars = "Имя содержит недопустимые символы";
     public static final String failAddToCatalog = "Не удалось добавить в каталог";
+    public static final String selectCorrectDate = "Выберите дату";
+    public static final String inputCorrectCount = "Введите корректное число";
+    public static final String noSelectedElements = "Выберите элемент из каталога";
 
     //Параметры табличного компонента
     public static final int rowHeight = 40;

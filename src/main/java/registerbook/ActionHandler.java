@@ -1,13 +1,16 @@
 package registerbook;
 
+import com.github.lgooddatepicker.components.DatePicker;
 import registerbook.data_access_components.DBHandler;
 import registerbook.table_component.*;
 
 import static registerbook.ResourcesList.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ActionHandler {
 
@@ -65,7 +68,7 @@ public class ActionHandler {
 
         //Добавляем новую позицию в каталог
         if (command.equals(ADD_COMMAND) & state.equals(CATALOG_DATASET)) {
-            String name = showAddCatalogElementDialog();
+            String name = showInputCatalogElementDialog();
             if (name == null) return;
             try {
                 dbHandler.addNewNameToCatalog(name);
@@ -79,7 +82,12 @@ public class ActionHandler {
 
         //Добавляем новую операцию в журнал операций
         if (command.equals(ADD_COMMAND) & state.equals(OPERATIONS_DATASET)) {
-            System.out.println("Добавляем в журнал операций");
+            try {
+                Object[] data = showInputOperationDialog();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, doNotOpenOperations, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
 
     }
@@ -114,10 +122,19 @@ public class ActionHandler {
         return tableContent;
     }
 
+    private boolean isCorrectNumberString(String numberString) {
+        try {
+            Integer.parseInt(numberString);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
     // ********** Ниже идет список методов, отображающих различные диалоговые окна **********
 
     //Запрос имени нового элемента каталога
-    private String showAddCatalogElementDialog() {
+    private String showInputCatalogElementDialog() {
         String disabledChars = "_%*\"?'";
         boolean findDeniedChar;
         String name;
@@ -148,10 +165,87 @@ public class ActionHandler {
     }
 
     //Запрос новой операции
-    private Object[] showAddOperationDialog() {
-        JPanel pane = new JPanel();
+    private Object[] showInputOperationDialog() throws Exception {
+        //Создаем диалоговое окно
+        JPanel dialogPane = new JPanel(new BorderLayout(5, 5));
 
-        return null;
+        JPanel topPane = new JPanel(new GridLayout(0, 2));
+
+        Box datePane = Box.createHorizontalBox();
+        datePane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        Box countPane = Box.createHorizontalBox();
+        countPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        DatePicker datePicker = new DatePicker();
+        datePicker.setDateToToday();
+        datePicker.getComponentDateTextField().setEditable(false);
+
+        Dimension dim = datePicker.getPreferredSize();
+        datePicker.setMaximumSize(new Dimension(dim.width, 25));
+
+        JTextField countField = new JTextField(5);
+        countField.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        dim = countField.getPreferredSize();
+        countField.setMaximumSize(new Dimension(dim.width, 25));
+
+        datePane.add(new JLabel("Дата операции:"));
+        datePane.add(Box.createHorizontalStrut(10));
+        datePane.add(Box.createHorizontalGlue());
+        datePane.add(datePicker);
+
+        countPane.add(new JLabel("Количество:"));
+        countPane.add(Box.createHorizontalGlue());
+        countPane.add(countField);
+
+        topPane.add(datePane);
+        topPane.add(Box.createHorizontalStrut(100));
+        topPane.add(countPane);
+        topPane.add(Box.createHorizontalStrut(100));
+
+        dialogPane.add(topPane, BorderLayout.NORTH);
+
+        DTableContent catalogContent = null;
+
+        catalogContent = createTableContent(CATALOG_DATASET);
+
+        DTablePane catalogPane = new DTablePane();
+        catalogPane.refresh(catalogContent);
+        catalogPane.setSingleSelectionMode();
+        dialogPane.add(catalogPane.getVisualComponent(), BorderLayout.CENTER);
+
+        //Запрашиваем данные у пользователя
+        int answer;
+        String date;
+        int count;
+        int id;
+        while (true) {
+            answer = JOptionPane.showConfirmDialog(null, dialogPane, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer != 0) return null;
+
+            try {
+                date = datePicker.getDate().toString();
+                if (date == null) throw new Exception(selectCorrectDate);
+
+                if (!isCorrectNumberString(countField.getText())) throw new Exception(inputCorrectCount);
+                count = Integer.parseInt(countField.getText());
+
+                if (catalogPane.getSelectionRows().isEmpty()) throw new Exception(noSelectedElements);
+                id = (Integer) catalogPane.getSelectionRows().get(0)[0];
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            break;
+        }
+
+        //Формируем ответ
+        Object[] result = new Object[3];
+        result[0] = date;
+        result[1] = count;
+        result[2] = id;
+        return result;
     }
 
 }
