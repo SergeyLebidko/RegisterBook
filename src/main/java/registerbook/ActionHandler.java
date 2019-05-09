@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ActionHandler {
 
@@ -40,7 +39,7 @@ public class ActionHandler {
 
     public void commandHandler(String command) {
 
-        //Выводим каталог
+        //Выводим Каталог
         if (command.equals(OPEN_CATALOG_COMMAND)) {
             try {
                 setMainTableContent(createTableContent(CATALOG_DATASET));
@@ -53,7 +52,7 @@ public class ActionHandler {
             return;
         }
 
-        //Выводим журнал операций
+        //Выводим Журнал операций
         if (command.equals(OPEN_OPERATIONS_COMMAND)) {
             try {
                 setMainTableContent(createTableContent(OPERATIONS_DATASET));
@@ -66,14 +65,14 @@ public class ActionHandler {
             return;
         }
 
-        //Добавляем новую позицию в каталог
+        //Добавляем новую позицию в Каталог
         if (command.equals(ADD_COMMAND) & state.equals(CATALOG_DATASET)) {
             String name = showInputCatalogElementDialog();
             if (name == null) return;
             try {
-                dbHandler.addNewNameToCatalog(name);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, failAddToCatalog + " " + name, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                dbHandler.addCatalogElement(name);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, failAddToCatalog , "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             commandHandler(OPEN_CATALOG_COMMAND);
@@ -82,12 +81,25 @@ public class ActionHandler {
 
         //Добавляем новую операцию в журнал операций
         if (command.equals(ADD_COMMAND) & state.equals(OPERATIONS_DATASET)) {
+            Object[] data;
             try {
-                Object[] data = showInputOperationDialog();
+                //Получаем данные от пользователя
+                data = showInputOperationDialog();
+                if (data==null)return;
+
+                //Пытаемся добавить их в базу
+                String date = (String) data[0];
+                int count = (Integer) data[1];
+                int catalogId = (Integer) data[2];
+                dbHandler.addOperationsElement(date, count, catalogId);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, doNotOpenOperations, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            //Если всё прошло успешно - обновляем журнал операций на экране
+            commandHandler(OPEN_OPERATIONS_COMMAND);
+            return;
         }
 
     }
@@ -207,8 +219,15 @@ public class ActionHandler {
 
         DTableContent catalogContent = null;
 
-        catalogContent = createTableContent(CATALOG_DATASET);
+        //Получаем из БД список элементов Каталога
+        try{
+            catalogContent = createTableContent(CATALOG_DATASET);
+        }
+        catch (Exception e){
+            throw new Exception(doNotOpenCatalog);
+        }
 
+        //Включаем полученный список элементов Каталога в табличный компонент для вывода на экран
         DTablePane catalogPane = new DTablePane();
         catalogPane.refresh(catalogContent);
         catalogPane.setSingleSelectionMode();
@@ -218,7 +237,7 @@ public class ActionHandler {
         int answer;
         String date;
         int count;
-        int id;
+        int catalogId;
         while (true) {
             answer = JOptionPane.showConfirmDialog(null, dialogPane, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (answer != 0) return null;
@@ -230,8 +249,10 @@ public class ActionHandler {
                 if (!isCorrectNumberString(countField.getText())) throw new Exception(inputCorrectCount);
                 count = Integer.parseInt(countField.getText());
 
+                if (count==0)throw new Exception(valueMustBeNotZero);
+
                 if (catalogPane.getSelectionRows().isEmpty()) throw new Exception(noSelectedElements);
-                id = (Integer) catalogPane.getSelectionRows().get(0)[0];
+                catalogId = (Integer) catalogPane.getSelectionRows().get(0)[0];
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -244,7 +265,7 @@ public class ActionHandler {
         Object[] result = new Object[3];
         result[0] = date;
         result[1] = count;
-        result[2] = id;
+        result[2] = catalogId;
         return result;
     }
 

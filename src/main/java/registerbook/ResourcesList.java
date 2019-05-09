@@ -54,10 +54,14 @@ public class ResourcesList {
     public static final String doNotOpenOperations = "Не удалось открыть Журнал операций";
     public static final String nameIsNotEmpty = "Имя не может быть пустым";
     public static final String nameContainsDisabledChars = "Имя содержит недопустимые символы";
-    public static final String failAddToCatalog = "Не удалось добавить в каталог";
+    public static final String failAddToCatalog = "Не удалось добавить элемент в Каталог";
+    public static final String failAddToOperations = "Не удалось внести сведения об операции в базу данных";
     public static final String selectCorrectDate = "Выберите дату";
     public static final String inputCorrectCount = "Введите корректное число";
     public static final String noSelectedElements = "Выберите элемент из каталога";
+    public static final String valueMustBeNotZero = "Количество не может быть нулевым";
+    public static final String notCorrectCount = "Введенное количество слишком мало. Введите большее значение";
+    public static final String failCheckCount = "Ошибка проверки количества в базе данных";
 
     //Параметры табличного компонента
     public static final int rowHeight = 40;
