@@ -58,6 +58,8 @@ public class ResourcesList {
     public static final String failAddOperationElement = "Не удалось внести сведения об операции в базу данных";
     public static final String failRemoveCatalogElement = "Не удалось удалить элемент каталога";
     public static final String failRemoveOperationElement = "Не удалось удалить операцию";
+    public static final String failUpdateCatalogElement = "Не удалось изменить элемент";
+    public static final String failUpdateOperationsElement = "Не удалось изменить операцию";
     public static final String selectCorrectDate = "Выберите дату";
     public static final String inputCorrectCount = "Введите корректное число";
     public static final String noSelectedCatalogElements = "Выберите элемент из каталога";
@@ -65,6 +67,7 @@ public class ResourcesList {
     public static final String valueMustBeNotZero = "Количество не может быть нулевым";
     public static final String valueIsNotCorrect = "Введено некорректное количество";
     public static final String operationIsNotBeRemove = "Операция не может быть удалена";
+    public static final String selectOneElement = "Выберите один элемент";
 
     //Параметры табличного компонента
     public static final int rowHeight = 40;

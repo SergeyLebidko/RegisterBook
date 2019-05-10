@@ -133,8 +133,13 @@ public class GUI {
         addBtn.addActionListener((e)->{
             actionHandler.commandHandler(ActionHandler.ADD_COMMAND);
         });
+
         removeBtn.addActionListener((e)->{
             actionHandler.commandHandler(ActionHandler.REMOVE_COMMAND);
+        });
+
+        editBtn.addActionListener((e)->{
+            actionHandler.commandHandler(actionHandler.EDIT_COMMAND);
         });
     }
 

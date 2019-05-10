@@ -76,17 +76,20 @@ public class DBHandler {
     public void removeOperationsElement(int id) throws Exception {
         String startTransactionQuery = "BEGIN TRANSACTION";
         String removeQuery = "DELETE FROM OPERATIONS WHERE ID=" + id;
-        String checkQuery = "SELECT SUM(COUNT) FROM OPERATIONS WHERE ID=" + id + " GROUP BY DATE";
         String abortTransaction = "ROLLBACK";
         String endTransactionQuery = "COMMIT";
 
         try {
+            int catalogId = getCatalogId(id);
             statement.executeUpdate(startTransactionQuery);
             statement.executeUpdate(removeQuery);
 
             //Проверяем корректность операции. Если она некорректа - делаем откат
+            String checkQuery = "SELECT SUM(COUNT) FROM OPERATIONS WHERE CATALOG_ID=" + catalogId + " GROUP BY DATE";
+
             ResultSet resultSet = statement.executeQuery(checkQuery);
             ArrayList<Object[]> list = convertSetToList(resultSet);
+
             int sum = 0;
             for (Object[] row : list) {
                 sum += (Integer) row[0];
@@ -101,6 +104,45 @@ public class DBHandler {
             throw new Exception(failRemoveOperationElement);
         }
 
+    }
+
+    public void editCatalogElement(int id, String nextName) throws Exception {
+        String query = "UPDATE CATALOG SET NAME=\"" + nextName + "\" WHERE ID=" + id;
+        statement.executeUpdate(query);
+    }
+
+    public void editOperationsElement(int id, int nextCount, String nextDate) throws Exception {
+        String startTransactionQuery = "BEGIN TRANSACTION";
+        String updateQuery = "UPDATE OPERATIONS SET DATE=\"" + nextDate + "\", COUNT=" + nextCount + " " +
+                "WHERE ID=" + id;
+        String abortTransaction = "ROLLBACK";
+        String endTransactionQuery = "COMMIT";
+
+        try {
+            statement.executeUpdate(startTransactionQuery);
+            statement.executeUpdate(updateQuery);
+
+            //Проверяем корректность операции. Если она некорректа - делаем откат
+            int catalogId;
+            catalogId = getCatalogId(id);
+            String checkQuery = "SELECT SUM(COUNT) FROM OPERATIONS WHERE CATALOG_ID=" + catalogId + " GROUP BY DATE";
+
+            ResultSet resultSet = statement.executeQuery(checkQuery);
+            ArrayList<Object[]> list = convertSetToList(resultSet);
+
+            int sum = 0;
+            for (Object[] row : list) {
+                sum += (Integer) row[0];
+                if (sum < 0) {
+                    statement.executeUpdate(abortTransaction);
+                    throw new Exception(valueIsNotCorrect);
+                }
+            }
+
+            statement.executeUpdate(endTransactionQuery);
+        } catch (SQLException ex) {
+            throw new Exception(failUpdateOperationsElement + " " + ex.getMessage());
+        }
     }
 
     private ArrayList<Object[]> convertSetToList(ResultSet resultSet) throws Exception {
@@ -120,17 +162,12 @@ public class DBHandler {
         return list;
     }
 
-    private void showList(ArrayList<Object[]> list) {
-        if (list.isEmpty()) {
-            System.out.println("Список не содержит строк...");
-            return;
-        }
-        System.out.println("Список:");
-        for (Object[] row : list) {
-            System.out.println(Arrays.toString(row));
-        }
-        System.out.println();
-        System.out.println();
+    private int getCatalogId(int operationId) throws Exception {
+        String query = "SELECT CATALOG_ID FROM OPERATIONS WHERE ID=" + operationId;
+        ResultSet resultSet = statement.executeQuery(query);
+        ArrayList<Object[]> list = convertSetToList(resultSet);
+        int result = (Integer) list.get(0)[0];
+        return result;
     }
 
 }

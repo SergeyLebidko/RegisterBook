@@ -8,7 +8,9 @@ import static registerbook.ResourcesList.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ActionHandler {
 
@@ -18,6 +20,7 @@ public class ActionHandler {
     public static final String OPEN_OPERATIONS_COMMAND = "open operations";
     public static final String ADD_COMMAND = "add";
     public static final String REMOVE_COMMAND = "remove";
+    public static final String EDIT_COMMAND = "edit";
 
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";
@@ -103,23 +106,23 @@ public class ActionHandler {
         }
 
         //Удаление из Каталога
-        if (command.equals(REMOVE_COMMAND) & state.equals(CATALOG_DATASET)){
+        if (command.equals(REMOVE_COMMAND) & state.equals(CATALOG_DATASET)) {
             ArrayList<Object[]> list = mainTable.getSelectionRows();
 
             //Проверяем, есть ли выделенные элементы
-            if (list.isEmpty()){
+            if (list.isEmpty()) {
                 JOptionPane.showMessageDialog(null, noSelectedCatalogElements, "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             //Последовательно удаляем записи из таблицы Каталог
             int id;
-            for (Object[] row: list){
-                id = (Integer)row[0];
+            for (Object[] row : list) {
+                id = (Integer) row[0];
                 try {
                     dbHandler.removeCatalogElement(id);
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, failRemoveCatalogElement+" "+row[1], "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, failRemoveCatalogElement + " " + row[1], "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
@@ -129,29 +132,101 @@ public class ActionHandler {
         }
 
         //Удаление из Журнала операций
-        if (command.equals(REMOVE_COMMAND) & state.equals(OPERATIONS_DATASET)){
+        if (command.equals(REMOVE_COMMAND) & state.equals(OPERATIONS_DATASET)) {
             ArrayList<Object[]> list = mainTable.getSelectionRows();
 
             //Проверяем, есть ли выделенные элементы
-            if (list.isEmpty()){
+            if (list.isEmpty()) {
                 JOptionPane.showMessageDialog(null, noSelectedOperationsElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             //Последовательно удаляем записи из таблицы Журнал операций
             int id;
-            for (Object[] row: list){
-                id = (Integer)row[0];
+            for (Object[] row : list) {
+                id = (Integer) row[0];
                 try {
                     dbHandler.removeOperationsElement(id);
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, failRemoveOperationElement+" "+row[0]+" / "+row[1]+" / "+row[2], "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
             //Обновляем журнал операций на экране
             commandHandler(OPEN_OPERATIONS_COMMAND);
             return;
+        }
+
+        //Редактирование элемента каталога
+        if (command.equals(EDIT_COMMAND) & state.equals(CATALOG_DATASET)) {
+            ArrayList<Object[]> list = mainTable.getSelectionRows();
+
+            //Проверяем количество выделенных элементов
+            if (list.isEmpty() | list.size() > 1) {
+                JOptionPane.showMessageDialog(null, selectOneElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Получаем новое имя для элемента
+            String name;
+            String nextName;
+            int id;
+            id = (Integer) list.get(0)[0];
+            name = (String) list.get(0)[1];
+
+            nextName = showInputCatalogElementDialog(name);
+            if (nextName == null) return;
+
+            //Пытаемся обновить имя в базе данных
+            try {
+                dbHandler.editCatalogElement(id, nextName);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, failUpdateCatalogElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Если всё успешно - отображаем измененные данные
+            commandHandler(OPEN_CATALOG_COMMAND);
+            return;
+        }
+
+        //Редактирование элемента журнала операций
+        if (command.equals(EDIT_COMMAND) & state.equals(OPERATIONS_DATASET)) {
+            ArrayList<Object[]> list = mainTable.getSelectionRows();
+
+            //Проверяем количество выделенных элементов
+            if (list.isEmpty() | list.size() > 1) {
+                JOptionPane.showMessageDialog(null, selectOneElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Формируем запрос пользователю
+            int id;
+            String dateStr;
+            String name;
+            int count;
+
+            id = (Integer) list.get(0)[0];
+            dateStr = (String) list.get(0)[1];
+            name = (String) list.get(0)[2];
+            count = (Integer) list.get(0)[3];
+
+            //Получаем ответ от пользователя
+            Object[] row = showEditOperationDialog(dateStr, name, count);
+            if (row == null) return;
+
+            //Пытаемся записать изменения в базу данных
+            int nextCount = (Integer) row[0];
+            String nextDateStr = (String) row[1];
+
+            try {
+                dbHandler.editOperationsElement(id, nextCount, nextDateStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            commandHandler(OPEN_OPERATIONS_COMMAND);
         }
 
     }
@@ -186,7 +261,7 @@ public class ActionHandler {
         return tableContent;
     }
 
-    private boolean isCorrectNumberString(String numberString) {
+    private boolean isCorrectCountString(String numberString) {
         try {
             Integer.parseInt(numberString);
             return true;
@@ -197,14 +272,18 @@ public class ActionHandler {
 
     // ********** Ниже идет список методов, отображающих различные диалоговые окна **********
 
-    //Запрос имени нового элемента каталога
+    //Запрос имени элемента каталога
     private String showInputCatalogElementDialog() {
+        return showInputCatalogElementDialog("");
+    }
+
+    private String showInputCatalogElementDialog(String startValue) {
         String disabledChars = "_%*\"?'";
         boolean findDeniedChar;
         String name;
 
         do {
-            name = JOptionPane.showInputDialog(null, "Введите имя");
+            name = JOptionPane.showInputDialog(null, "Введите имя", startValue);
             if (name == null) return null;
             name = name.trim();
             if (name.equals("")) {
@@ -295,9 +374,8 @@ public class ActionHandler {
 
             try {
                 date = datePicker.getDate().toString();
-                if (date == null) throw new Exception(selectCorrectDate);
 
-                if (!isCorrectNumberString(countField.getText())) throw new Exception(inputCorrectCount);
+                if (!isCorrectCountString(countField.getText())) throw new Exception(inputCorrectCount);
                 count = Integer.parseInt(countField.getText());
 
                 if (count == 0) throw new Exception(valueMustBeNotZero);
@@ -305,6 +383,9 @@ public class ActionHandler {
                 if (catalogPane.getSelectionRows().isEmpty()) throw new Exception(noSelectedCatalogElements);
                 catalogId = (Integer) catalogPane.getSelectionRows().get(0)[0];
 
+            } catch (NullPointerException ex) {
+                JOptionPane.showMessageDialog(null, selectCorrectDate, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                continue;
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
                 continue;
@@ -317,6 +398,77 @@ public class ActionHandler {
         result[0] = date;
         result[1] = count;
         result[2] = catalogId;
+        return result;
+    }
+
+    //Диалоговое окно редактирования параметров операции
+    private Object[] showEditOperationDialog(String dateStr, String name, int count) {
+        JPanel dialogPane = new JPanel(new GridLayout(0, 1, 10, 10));
+
+        Box nameBox = Box.createHorizontalBox();
+        Box dateBox = Box.createHorizontalBox();
+        Box countBox = Box.createHorizontalBox();
+
+        nameBox.add(new JLabel(name));
+        nameBox.add(Box.createHorizontalStrut(20));
+        nameBox.add(Box.createHorizontalGlue());
+
+        DatePicker datePicker = new DatePicker();
+        datePicker.getComponentDateTextField().setEditable(false);
+
+        int year = Integer.parseInt(dateStr.split("-")[0]);
+        int month = Integer.parseInt(dateStr.split("-")[1]);
+        int day = Integer.parseInt(dateStr.split("-")[2]);
+
+        datePicker.setDate(LocalDate.of(year, month, day));
+
+        dateBox.add(new JLabel("Дата операции: "));
+        dateBox.add(Box.createHorizontalStrut(20));
+        dateBox.add(Box.createHorizontalGlue());
+        dateBox.add(datePicker);
+
+        JTextField countField = new JTextField(5);
+        countField.setText(count + "");
+        countField.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        countBox.add(new JLabel("Количество:"));
+        countBox.add(Box.createHorizontalStrut(20));
+        countBox.add(Box.createHorizontalGlue());
+        countBox.add(countField);
+
+        dialogPane.add(nameBox);
+        dialogPane.add(dateBox);
+        dialogPane.add(countBox);
+
+        int answer;
+        String nextDateStr;
+        int nextCount;
+        while (true) {
+            answer = JOptionPane.showConfirmDialog(null, dialogPane, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer != 0) return null;
+
+            try {
+                nextDateStr = datePicker.getDate().toString();
+
+                if (!isCorrectCountString(countField.getText())) throw new Exception(inputCorrectCount);
+                nextCount = Integer.parseInt(countField.getText());
+
+                if (count == 0) throw new Exception(valueMustBeNotZero);
+            } catch (NullPointerException ex) {
+                JOptionPane.showMessageDialog(null, selectCorrectDate, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                continue;
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Ошибка", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+
+            break;
+        }
+
+        //Формируем ответ
+        Object[] result = new Object[2];
+        result[0] = nextCount;
+        result[1] = nextDateStr;
         return result;
     }
 
