@@ -32,7 +32,7 @@ public class GUI {
         createMainTable();
         createActionHandler();
         createOpenMenu();
-        createAddButtonHandler();
+        createButtonHandlers();
         showFrm();
     }
 
@@ -129,9 +129,12 @@ public class GUI {
         });
     }
 
-    private void createAddButtonHandler(){
+    private void createButtonHandlers(){
         addBtn.addActionListener((e)->{
             actionHandler.commandHandler(ActionHandler.ADD_COMMAND);
+        });
+        removeBtn.addActionListener((e)->{
+            actionHandler.commandHandler(ActionHandler.REMOVE_COMMAND);
         });
     }
 

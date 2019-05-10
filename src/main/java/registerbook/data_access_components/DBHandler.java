@@ -64,8 +64,43 @@ public class DBHandler {
 
             statement.executeUpdate(endTransactionQuery);
         } catch (SQLException ex) {
-            throw new Exception(failAddToOperations);
+            throw new Exception(failAddOperationElement);
         }
+    }
+
+    public void removeCatalogElement(int id) throws Exception {
+        String query = "DELETE FROM CATALOG WHERE ID=" + id;
+        statement.executeUpdate(query);
+    }
+
+    public void removeOperationsElement(int id) throws Exception {
+        String startTransactionQuery = "BEGIN TRANSACTION";
+        String removeQuery = "DELETE FROM OPERATIONS WHERE ID=" + id;
+        String checkQuery = "SELECT SUM(COUNT) FROM OPERATIONS WHERE ID=" + id + " GROUP BY DATE";
+        String abortTransaction = "ROLLBACK";
+        String endTransactionQuery = "COMMIT";
+
+        try {
+            statement.executeUpdate(startTransactionQuery);
+            statement.executeUpdate(removeQuery);
+
+            //Проверяем корректность операции. Если она некорректа - делаем откат
+            ResultSet resultSet = statement.executeQuery(checkQuery);
+            ArrayList<Object[]> list = convertSetToList(resultSet);
+            int sum = 0;
+            for (Object[] row : list) {
+                sum += (Integer) row[0];
+                if (sum < 0) {
+                    statement.executeUpdate(abortTransaction);
+                    throw new Exception(operationIsNotBeRemove);
+                }
+            }
+
+            statement.executeUpdate(endTransactionQuery);
+        } catch (SQLException ex) {
+            throw new Exception(failRemoveOperationElement);
+        }
+
     }
 
     private ArrayList<Object[]> convertSetToList(ResultSet resultSet) throws Exception {

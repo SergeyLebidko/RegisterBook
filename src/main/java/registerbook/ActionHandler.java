@@ -8,7 +8,6 @@ import static registerbook.ResourcesList.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ActionHandler {
@@ -18,6 +17,7 @@ public class ActionHandler {
     public static final String OPEN_CATALOG_COMMAND = "open catalog";
     public static final String OPEN_OPERATIONS_COMMAND = "open operations";
     public static final String ADD_COMMAND = "add";
+    public static final String REMOVE_COMMAND = "remove";
 
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";
@@ -72,7 +72,7 @@ public class ActionHandler {
             try {
                 dbHandler.addCatalogElement(name);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, failAddToCatalog , "Ошибка", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, failAddCatalogElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             commandHandler(OPEN_CATALOG_COMMAND);
@@ -85,7 +85,7 @@ public class ActionHandler {
             try {
                 //Получаем данные от пользователя
                 data = showInputOperationDialog();
-                if (data==null)return;
+                if (data == null) return;
 
                 //Пытаемся добавить их в базу
                 String date = (String) data[0];
@@ -98,6 +98,58 @@ public class ActionHandler {
             }
 
             //Если всё прошло успешно - обновляем журнал операций на экране
+            commandHandler(OPEN_OPERATIONS_COMMAND);
+            return;
+        }
+
+        //Удаление из Каталога
+        if (command.equals(REMOVE_COMMAND) & state.equals(CATALOG_DATASET)){
+            ArrayList<Object[]> list = mainTable.getSelectionRows();
+
+            //Проверяем, есть ли выделенные элементы
+            if (list.isEmpty()){
+                JOptionPane.showMessageDialog(null, noSelectedCatalogElements, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Последовательно удаляем записи из таблицы Каталог
+            int id;
+            for (Object[] row: list){
+                id = (Integer)row[0];
+                try {
+                    dbHandler.removeCatalogElement(id);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, failRemoveCatalogElement+" "+row[1], "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            //Обновляем Каталог на экране
+            commandHandler(OPEN_CATALOG_COMMAND);
+            return;
+        }
+
+        //Удаление из Журнала операций
+        if (command.equals(REMOVE_COMMAND) & state.equals(OPERATIONS_DATASET)){
+            ArrayList<Object[]> list = mainTable.getSelectionRows();
+
+            //Проверяем, есть ли выделенные элементы
+            if (list.isEmpty()){
+                JOptionPane.showMessageDialog(null, noSelectedOperationsElement, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //Последовательно удаляем записи из таблицы Журнал операций
+            int id;
+            for (Object[] row: list){
+                id = (Integer)row[0];
+                try {
+                    dbHandler.removeOperationsElement(id);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, failRemoveOperationElement+" "+row[0]+" / "+row[1]+" / "+row[2], "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            //Обновляем журнал операций на экране
             commandHandler(OPEN_OPERATIONS_COMMAND);
             return;
         }
@@ -220,10 +272,9 @@ public class ActionHandler {
         DTableContent catalogContent = null;
 
         //Получаем из БД список элементов Каталога
-        try{
+        try {
             catalogContent = createTableContent(CATALOG_DATASET);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(doNotOpenCatalog);
         }
 
@@ -249,9 +300,9 @@ public class ActionHandler {
                 if (!isCorrectNumberString(countField.getText())) throw new Exception(inputCorrectCount);
                 count = Integer.parseInt(countField.getText());
 
-                if (count==0)throw new Exception(valueMustBeNotZero);
+                if (count == 0) throw new Exception(valueMustBeNotZero);
 
-                if (catalogPane.getSelectionRows().isEmpty()) throw new Exception(noSelectedElements);
+                if (catalogPane.getSelectionRows().isEmpty()) throw new Exception(noSelectedCatalogElements);
                 catalogId = (Integer) catalogPane.getSelectionRows().get(0)[0];
 
             } catch (Exception ex) {
