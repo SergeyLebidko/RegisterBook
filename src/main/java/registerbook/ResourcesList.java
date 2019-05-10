@@ -60,8 +60,7 @@ public class ResourcesList {
     public static final String inputCorrectCount = "Введите корректное число";
     public static final String noSelectedElements = "Выберите элемент из каталога";
     public static final String valueMustBeNotZero = "Количество не может быть нулевым";
-    public static final String notCorrectCount = "Введенное количество слишком мало. Введите большее значение";
-    public static final String failCheckCount = "Ошибка проверки количества в базе данных";
+    public static final String valueIsNotCorrect = "Введено некорректное количество";
 
     //Параметры табличного компонента
     public static final int rowHeight = 40;

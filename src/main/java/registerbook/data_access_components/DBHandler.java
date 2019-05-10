@@ -37,36 +37,32 @@ public class DBHandler {
     }
 
     public void addOperationsElement(String date, int count, int catalogId) throws Exception {
-
-        //Проверяем корректность введенных данных согласно уже имеющейся в БД информации
-        //Данные считаются корректными, если не делают остатки на дату их добавления отрицательными
-        if (count < 0) {
-            String tmpQuery = "SELECT SUM(COUNT) " +
-                    "FROM OPERATIONS " +
-                    "WHERE CATALOG_ID=" + catalogId + " AND DATE(DATE)<=DATE(\"" + date + "\") " +
-                    "ORDER BY DATE(DATE)";
-
-            ResultSet tmpSet;
-            try {
-                tmpSet = statement.executeQuery(tmpQuery);
-            }catch (Exception ex){
-                throw new Exception(failCheckCount);
-            }
-
-            Integer sumCount = getIntegerValue(tmpSet);
-            if (sumCount == null) {
-                sumCount = 0;
-            }
-            if ((sumCount + count) < 0) {
-                throw new Exception(notCorrectCount);
-            }
-        }
-
-        //Пытаемся выполнить запрос на добавление строки в БД
+        String startTransactionQuery = "BEGIN TRANSACTION";
         String insertQuery = "INSERT INTO OPERATIONS (CATALOG_ID, DATE, COUNT) " +
                 "VALUES (" + catalogId + ", \"" + date + "\", " + count + ")";
+        String checkQuery = "SELECT SUM(COUNT) FROM OPERATIONS WHERE CATALOG_ID=" + catalogId + " GROUP BY DATE";
+        String abortTransaction = "ROLLBACK";
+        String endTransactionQuery = "COMMIT";
+
         try {
+            statement.executeUpdate(startTransactionQuery);
             statement.executeUpdate(insertQuery);
+
+            //Проверяем корректность операции. Если она некорректа - делаем откат
+            if (count < 0) {
+                ResultSet resultSet = statement.executeQuery(checkQuery);
+                ArrayList<Object[]> list = convertSetToList(resultSet);
+                int sum = 0;
+                for (Object[] row : list) {
+                    sum += (Integer) row[0];
+                    if (sum < 0) {
+                        statement.executeUpdate(abortTransaction);
+                        throw new Exception(valueIsNotCorrect);
+                    }
+                }
+            }
+
+            statement.executeUpdate(endTransactionQuery);
         } catch (SQLException ex) {
             throw new Exception(failAddToOperations);
         }
@@ -87,14 +83,6 @@ public class DBHandler {
         }
 
         return list;
-    }
-
-    //Данный метод предназначен для извлечения целого числа из результата SQL-запроса
-    //Предполагается, что результат содержит только это число и больше никаких других данных в нем нет
-    private Integer getIntegerValue(ResultSet resultSet) throws Exception {
-        ArrayList<Object[]> list = convertSetToList(resultSet);
-        Object value = list.get(0)[0];
-        return value == null ? null : (Integer) value;
     }
 
     private void showList(ArrayList<Object[]> list) {
