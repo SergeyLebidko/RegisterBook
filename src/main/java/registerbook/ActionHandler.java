@@ -247,8 +247,48 @@ public class ActionHandler {
             }
 
             DTableContent tableContent = new DTableContent(list);
-            tableContent.setDisplayName("Отчет по остаткам на "+dateStr);
+            tableContent.setDisplayName("Отчет по остаткам на " + dateStr);
             tableContent.setColumnNames("Наименование", "Остаток");
+            mainTable.refresh(tableContent);
+            state = NO_DATASET;
+            return;
+        }
+
+        //Вывод отчета по оборотам
+        if (command.equals(TURNOVER_REPORT_COMMAND)) {
+            Object[] data;
+
+            //Запрашиваем у пользователя элемент каталога, по которому будем получать отчет
+            try {
+                data = getCatalogElement();
+                if (data == null) return;
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, doNotOpenCatalog, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int id = (Integer) data[0];
+            String name = (String) data[1];
+
+            ArrayList<Object[]> list;
+            try {
+                list = dbHandler.getTurnoverReport(id);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, failTurnOverReport, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int com = 0;
+            int cons = 0;
+            for (Object[] row: list){
+                if (row[1] instanceof Integer)com+=(Integer)row[1];
+                if (row[2] instanceof Integer)cons+=(Integer)row[2];
+            }
+            list.add(new Object[]{"ИТОГО:", com, cons});
+
+            DTableContent tableContent = new DTableContent(list);
+            tableContent.setDisplayName("Обороты по " + name);
+            tableContent.setColumnNames("Дата", "Приход", "Расход");
             mainTable.refresh(tableContent);
             state = NO_DATASET;
             return;
@@ -265,7 +305,7 @@ public class ActionHandler {
         ArrayList<Object[]> list;
         DTableContent tableContent = null;
 
-        //Открываем таблицу "каталог"
+        //Открываем таблицу Каталог
         if (nameTableContent.equals(CATALOG_DATASET)) {
             list = dbHandler.getCatalog();
             tableContent = new DTableContent(list);
@@ -274,7 +314,7 @@ public class ActionHandler {
             tableContent.setDisplayName("Каталог");
         }
 
-        //Открываем таблицу "журнал операций"
+        //Открываем таблицу Журнал операций
         if (nameTableContent.equals(OPERATIONS_DATASET)) {
             list = dbHandler.getOperations();
             tableContent = new DTableContent(list);
@@ -352,14 +392,53 @@ public class ActionHandler {
             if (answer != 0) return null;
 
             try {
-                dateStr=datePicker.getDate().toString();
-            }catch (NullPointerException e){
+                dateStr = datePicker.getDate().toString();
+            } catch (NullPointerException e) {
                 continue;
             }
             break;
         }
 
         return dateStr;
+    }
+
+    //Запрос элемента каталога
+    private Object[] getCatalogElement() throws Exception {
+        Object[] result = new Object[2];
+
+        //Получаем из БД список элементов Каталога
+        DTableContent catalogContent;
+        try {
+            catalogContent = createTableContent(CATALOG_DATASET);
+        } catch (Exception e) {
+            throw new Exception(doNotOpenCatalog);
+        }
+
+        DTablePane tablePane = new DTablePane();
+        tablePane.setSingleSelectionMode();
+        tablePane.refresh(catalogContent);
+
+        int answer;
+        ArrayList<Object[]> selectedRow;
+
+        //Запрашиваем у пользователя элемент каталога
+        while (true) {
+            answer = JOptionPane.showConfirmDialog(null, tablePane.getVisualComponent(), "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer != 0) return null;
+
+            selectedRow = tablePane.getSelectionRows();
+            if (selectedRow.isEmpty()) {
+                JOptionPane.showMessageDialog(null, noSelectedCatalogElements, "", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+
+            break;
+        }
+
+        //Формируем ответ
+        result[0] = selectedRow.get(0)[0];
+        result[1] = selectedRow.get(0)[1];
+        return result;
     }
 
     //Запрос новой операции

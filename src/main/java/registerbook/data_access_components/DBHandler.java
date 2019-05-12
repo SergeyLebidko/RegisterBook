@@ -158,6 +158,18 @@ public class DBHandler {
         return convertSetToList(resultSet);
     }
 
+    public ArrayList<Object[]> getTurnoverReport(int catalogId) throws Exception{
+        String query="SELECT DATE, " +
+                "CASE WHEN COUNT>0 THEN COUNT ELSE '' END, " +
+                "CASE WHEN COUNT<=0 THEN (-1)*COUNT ELSE '' END "  +
+                "FROM OPERATIONS " +
+                "WHERE CATALOG_ID="+catalogId+" " +
+                "ORDER BY DATE(DATE)";
+
+        ResultSet resultSet = statement.executeQuery(query);
+        return convertSetToList(resultSet);
+    }
+
     private ArrayList<Object[]> convertSetToList(ResultSet resultSet) throws Exception {
         ArrayList<Object[]> list = new ArrayList<>();
 
