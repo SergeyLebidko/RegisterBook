@@ -21,6 +21,8 @@ public class ActionHandler {
     public static final String ADD_COMMAND = "add";
     public static final String REMOVE_COMMAND = "remove";
     public static final String EDIT_COMMAND = "edit";
+    public static final String REMAINS_REPORT_COMMAND = "remains";
+    public static final String TURNOVER_REPORT_COMMAND = "turnover";
 
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";

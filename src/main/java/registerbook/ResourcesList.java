@@ -72,16 +72,18 @@ public class ResourcesList {
     //Параметры табличного компонента
     public static final int rowHeight = 40;
     public static final Color gridColor = Color.LIGHT_GRAY;
-    public static final Color headerColor = new Color(230,230,230);
-    public static final Color evenCellsColor = new Color(240,240,240);
-    public static final Color notEvenCellsColor = new Color(255,255,255);
+    public static final Color headerColor = new Color(230, 230, 230);
+    public static final Color evenCellsColor = new Color(240, 240, 240);
+    public static final Color notEvenCellsColor = new Color(255, 255, 255);
 
     //Шрифт для таблиц
     public static final Font mainFont = new Font("Arial", Font.PLAIN, 16);
 
     //Подписи для пунктов всплывающих меню
-    public static final String openCatalogMenuItemText="Открыть каталог";
-    public static final String openOperationsMenuItemText="Открыть журнал операций";
+    public static final String openCatalogMenuItemText = "Открыть каталог";
+    public static final String openOperationsMenuItemText = "Открыть журнал операций";
+    public static final String remainsReportMenuItemText = "Отчет по остаткам";
+    public static final String turnoverReportMenuItemText = "Отчет по оборотам";
 
     private static class ImageLoader {
 

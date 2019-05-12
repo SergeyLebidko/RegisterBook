@@ -32,6 +32,7 @@ public class GUI {
         createMainTable();
         createActionHandler();
         createOpenMenu();
+        createReportMenu();
         createButtonHandlers();
         showFrm();
     }
@@ -127,6 +128,37 @@ public class GUI {
                 actionHandler.commandHandler(ActionHandler.OPEN_OPERATIONS_COMMAND);
             }
         });
+    }
+
+    private void createReportMenu(){
+        JPopupMenu reportMenu;
+        reportMenu = new JPopupMenu();
+        JMenuItem remainsReportItem = new JMenuItem(remainsReportMenuItemText);
+        JMenuItem turnoverReportItem = new JMenuItem(turnoverReportMenuItemText);
+        reportMenu.add(remainsReportItem);
+        reportMenu.add(turnoverReportItem);
+
+        reportBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                reportMenu.show(reportBtn, e.getX(), e.getY());
+            }
+        });
+
+        remainsReportItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionHandler.commandHandler(ActionHandler.REMAINS_REPORT_COMMAND);
+            }
+        });
+
+        turnoverReportItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionHandler.commandHandler(ActionHandler.TURNOVER_REPORT_COMMAND);
+            }
+        });
+
     }
 
     private void createButtonHandlers(){
