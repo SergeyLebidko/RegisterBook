@@ -26,6 +26,7 @@ public class ActionHandler {
 
     private static final String CATALOG_DATASET = "catalog";
     private static final String OPERATIONS_DATASET = "operations";
+    private static final String NO_DATASET = "";
 
     private DTablePane mainTable;
 
@@ -35,7 +36,7 @@ public class ActionHandler {
 
     public ActionHandler() {
         dbHandler = MainClass.getDbHandler();
-        state = "";
+        state = NO_DATASET;
     }
 
     public void setMainTable(DTablePane mainTable) {
@@ -231,6 +232,28 @@ public class ActionHandler {
             commandHandler(OPEN_OPERATIONS_COMMAND);
         }
 
+        //Вывод отчета по остаткам
+        if (command.equals(REMAINS_REPORT_COMMAND)) {
+            ArrayList<Object[]> list;
+            String dateStr;
+            dateStr = getDateStr();
+            if (dateStr == null) return;
+
+            try {
+                list = dbHandler.getRemainsReport(dateStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, failRemainsReport, "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            DTableContent tableContent = new DTableContent(list);
+            tableContent.setDisplayName("Отчет по остаткам на "+dateStr);
+            tableContent.setColumnNames("Наименование", "Остаток");
+            mainTable.refresh(tableContent);
+            state = NO_DATASET;
+            return;
+        }
+
     }
 
     private void setMainTableContent(DTableContent tableContent) throws Exception {
@@ -307,6 +330,36 @@ public class ActionHandler {
         } while (true);
 
         return name;
+    }
+
+    //Запрос даты
+    private String getDateStr() {
+        JPanel dialogPane = new JPanel();
+
+        dialogPane.add(new JLabel("Введите дату"));
+        dialogPane.add(Box.createHorizontalStrut(5));
+
+        DatePicker datePicker = new DatePicker();
+        datePicker.getComponentDateTextField().setEditable(false);
+        datePicker.setDateToToday();
+
+        dialogPane.add(datePicker);
+
+        String dateStr = null;
+        int answer;
+        while (true) {
+            answer = JOptionPane.showConfirmDialog(null, dialogPane, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (answer != 0) return null;
+
+            try {
+                dateStr=datePicker.getDate().toString();
+            }catch (NullPointerException e){
+                continue;
+            }
+            break;
+        }
+
+        return dateStr;
     }
 
     //Запрос новой операции

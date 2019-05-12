@@ -68,6 +68,8 @@ public class ResourcesList {
     public static final String valueIsNotCorrect = "Введено некорректное количество";
     public static final String operationIsNotBeRemove = "Операция не может быть удалена";
     public static final String selectOneElement = "Выберите один элемент";
+    public static final String failRemainsReport = "Не удалось создать отчет по остаткам";
+    public static final String failTurnOverReport = "Не удалось создать отчет по оборотам";
 
     //Параметры табличного компонента
     public static final int rowHeight = 40;

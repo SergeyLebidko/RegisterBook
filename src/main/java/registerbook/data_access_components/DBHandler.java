@@ -145,6 +145,19 @@ public class DBHandler {
         }
     }
 
+    public ArrayList<Object[]> getRemainsReport(String dateStr) throws Exception {
+        String query = "SELECT NAME, SUM(COUNT) " +
+                "FROM CATALOG, OPERATIONS " +
+                "WHERE CATALOG.ID=CATALOG_ID AND DATE(DATE)<=DATE('" + dateStr + "') " +
+                "GROUP BY NAME " +
+                "ORDER BY NAME";
+
+        System.out.println(query);
+
+        ResultSet resultSet = statement.executeQuery(query);
+        return convertSetToList(resultSet);
+    }
+
     private ArrayList<Object[]> convertSetToList(ResultSet resultSet) throws Exception {
         ArrayList<Object[]> list = new ArrayList<>();
 
